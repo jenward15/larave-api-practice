@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -46,5 +47,27 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        $response = [];
+        $code = ( $exception->getCode() == 0 || !is_numeric($exception->getCode()) )
+            ? 500
+            : $exception->getCode();
+
+        if ($exception instanceof ValidationException) {
+            return $this->convertValidationExceptionToResponse($exception, $request);
+        } else {
+            $default = [
+                'code' => $code,
+                'detail' => $exception->getMessage() ?:
+                    'The requested URI is invalid, or the resource does not exist.'
+            ];
+
+            $response['errors'] = $default;
+        }
+
+        return response()->json($response, $code);
     }
 }
