@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedController;
+use App\Http\Controllers\v1\Auth\AuthenticatedController as AuthAuthenticatedController;
+use App\Http\Controllers\V1\Auth\RegisterController;
 use App\Http\Controllers\V1\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +24,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')
     ->name('api.')
     ->group(function () {
-        Route::resource('users', UserController::class);
+        Route::apiResource('users', UserController::class)->middleware('auth:sanctum');
+        Route::post('/auth/register', [RegisterController::class, 'store'])->name('store');
+        Route::post('/auth/login', [AuthAuthenticatedController::class, 'store'])->name('store');
 });
+
+
 

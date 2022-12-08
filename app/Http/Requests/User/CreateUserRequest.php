@@ -21,7 +21,7 @@ class CreateUserRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:64'],
             'email' => ['required', 'email:rfc,dns,spoof', Rule::unique(User::class, 'email')],
             'password' => ['required', 'string', Password::min(8)],
-            'birthdate' => ['required', 'date_format:d/m/Y'],
+            'birthdate' => ['required', 'date_format:m/d/Y'],
             'address' => ['required', 'string', 'max:200'],
         ];
     }
